@@ -6,7 +6,22 @@ ARCH=$(uname -m)
 export ARCH
 export OUTPATH=./dist
 export ADD_HOOKS="self-updater.bg.hook:fix-namespaces.hook"
-export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"
+
+# each channel needs its own glob so they don't match each other's .zsync
+case "${CHROME_CHANNEL:-stable}" in
+	beta)
+		export APPNAME=Google_Chrome_Beta
+		export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|Google_Chrome_Beta-*$ARCH.AppImage.zsync"
+		;;
+	canary)
+		export APPNAME=Google_Chrome_Canary
+		export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|Google_Chrome_Canary-*$ARCH.AppImage.zsync"
+		;;
+	*)
+		export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|Google_Chrome-*$ARCH.AppImage.zsync"
+		;;
+esac
+
 export URUNTIME_PRELOAD=1 # really needed here
 export STRACE_BINARY=chrome
 export STRACE_FLAGS='google.com --no-sandbox'
@@ -32,6 +47,9 @@ rm -rf ./AppDir/lib/__w
 
 # Turn AppDir into AppImage
 quick-sharun --make-appimage
+
+# only the stable release action needs ./dist/appinfo
+[ "${CHROME_CHANNEL:-stable}" = stable ] || rm -f ./dist/appinfo
 
 # Test the app for 12 seconds, if the test fails due to the app
 # having issues running in the CI use --simple-test instead

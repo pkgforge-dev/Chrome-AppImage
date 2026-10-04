@@ -6,7 +6,23 @@
 
 set -e
 
-_chrome_dir=$DATADIR/Chrome-AppImage
+case "$(cat "$APPDIR"/.chrome-channel 2>/dev/null || :)" in
+	beta)
+		_chrome_dir=$DATADIR/Chrome-AppImage-beta
+		_chrome_opt=chrome-beta
+		_chrome_link=google-chrome-beta
+		;;
+	canary)
+		_chrome_dir=$DATADIR/Chrome-AppImage-canary
+		_chrome_opt=chrome-canary
+		_chrome_link=google-chrome-canary
+		;;
+	*)
+		_chrome_dir=$DATADIR/Chrome-AppImage
+		_chrome_opt=chrome
+		_chrome_link=google-chrome-stable
+		;;
+esac
 _newdir=$_chrome_dir.tmp.$$
 _chrome_bin=$_chrome_dir/bin/chrome
 _tmpdir=${TMPDIR:-/tmp}/chrome-extract-$$
@@ -27,7 +43,7 @@ _get_chrome() {
 	# extract the chrome files into the bin dir of the new "AppDir"
 	rm -rf "$_newdir"
 	mkdir -p "$_newdir"/shared/bin
-	cp -r "$_tmpdir"/opt/google/chrome/. "$_newdir"/bin/ || return 1
+	cp -r "$_tmpdir"/opt/google/"$_chrome_opt"/. "$_newdir"/bin/ || return 1
 
 	# remove the qt5 shim so chrome does not dlopen Qt5 libraries from the
 	# host, only Qt6 is bundled in the AppImage
@@ -47,7 +63,7 @@ _get_chrome() {
 		fi
 	done
 
-	ln -sf chrome "$_newdir"/bin/google-chrome-stable
+	ln -sf chrome "$_newdir"/bin/"$_chrome_link"
 
 	ln -sfn "$APPDIR"/lib   "$_newdir"/lib
 	ln -sfn "$APPDIR"/etc   "$_newdir"/etc

@@ -9,10 +9,12 @@ on:
 
 jobs:
   build:
-    name: "${{ matrix.name }} (${{ matrix.arch }})"
+    name: "${{ matrix.name }} (${{ matrix.channel }}, ${{ matrix.arch }})"
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
+        channel: [stable, beta, canary]
+        arch: [x86_64, aarch64]
         include:
           - runs-on: ubuntu-latest
             name: Build AppImage
@@ -28,12 +30,16 @@ jobs:
         uses: pkgforge-dev/anylinux-setup-action@0964f2258d6c93d1391359978dde081fd8b3c6af # v2
       - name: Install Dependencies
         run: /bin/sh ./get-dependencies.sh
+        env:
+          CHROME_CHANNEL: ${{ matrix.channel }}
       - name: Make AppImage
         run: /bin/sh ./make-appimage.sh
+        env:
+          CHROME_CHANNEL: ${{ matrix.channel }}
       - name: Upload artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: AppImage-${{ matrix.arch }}
+          name: AppImage-${{ matrix.channel }}-${{ matrix.arch }}
           path: dist
 
   release:
@@ -48,11 +54,3 @@ jobs:
           merge-multiple: true
       - name: Release AppImage
         uses: pkgforge-dev/make-stable-appimage-release@4ed3d48ccb065352b6e6c0db6d39885b201c54a0 #v1.1
-      - name: Update README download links
-        run: |
-          VERSION=$(cat ./LATEST_VERSION)
-          sed -i -E "s/Google_Chrome-[^/]+-anylinux/Google_Chrome-${VERSION}-anylinux/g" README.md
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git diff --staged --quiet || (git commit -m "update README download links to ${VERSION} [skip ci]" && git push)
