@@ -12,15 +12,19 @@
 </p>
 
 
-| Latest Stable Release | Upstream URL |
-| :---: | :---: |
-| [Click here](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest) | [Click here](https://www.google.com/chrome/) |
+| Architecture | Stable | Beta | Canary | Upstream URL |
+| :---: | :---: | :---: | :---: | :---: |
+| x86_64 (64-bit Intel/AMD) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome-154.0.8037.97-anylinux-x86_64.AppImage) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome_Beta-156.0.8078.4-anylinux-x86_64.AppImage) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome_Canary-157.0.8084.0-anylinux-x86_64.AppImage) | [Click here](https://www.google.com/chrome/) |
+| aarch64 (64-bit ARM) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome-154.0.8037.97-anylinux-aarch64.AppImage) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome_Beta-156.0.8078.4-anylinux-aarch64.AppImage) | [Download](https://github.com/pkgforge-dev/Chrome-AppImage/releases/latest/download/Google_Chrome_Canary-157.0.8084.0-anylinux-aarch64.AppImage) | [Click here](https://www.google.com/chrome/) |
 
 Improved AppImage of Google Chrome, **independent of the host libc** making it able to work on very very old distros as well as musl-libc distros like alpine linux.
 
 </div>
 
 ---
+
+> [!NOTE]
+> Because Google Chrome's license prohibits redistribution, the Chrome binary itself is not bundled inside the AppImage. On first launch, you will be prompted for permission to automatically download and set up the official binary directly from Google (you can set `CHROME_AUTO_DOWNLOAD=1` to skip the prompt).
 
 AppImage made using [quick-sharun](https://github.com/pkgforge-dev/Anylinux-AppImages/blob/main/useful-tools/quick-sharun.sh), which makes it extremely easy to turn any binary into a portable package reliably without using containers or similar tricks. 
 
